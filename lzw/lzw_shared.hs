@@ -1,11 +1,9 @@
-
-Module Shared (Id,Abbreviation,CompDict,DecompDict,initCompDict,initDecompDict) where
+module Shared (Id,Abbreviation,CompDict,DecompDict,initCompDict,initDecompDict) where
   
 
 import System.Environment
-
+import Data.Tuple
 import GHC.Word
-
 import qualified Data.Map as M
 
 -- Index in the table
