@@ -1,6 +1,12 @@
 Module Lzw_Compress (compressString) where
 
 import Shared
+import qualified Data.ByteString.Lazy as BS
+import Data.Binary.Put
+import Data.Binary.Get
+import qualified Data.Map as M
+import Data.Tuple
+import GHC.Word
 
 --Function that accepts a string and  a (compression) dictionary and ouptus the abbreviation (based on the string ) & remaining part ofthe string.
 compChar :: [Word8] -> CompDict -> ([Word8],Abbreviation)
@@ -37,3 +43,18 @@ compressString = encoder 256 initCompDict where
   encoder index dict string = currentAbbr:(encoder (index + 1) (M.insert currentAbbr index dict) remainder) where
 
     (remainder,currentAbbr) = compChar string dict
+
+--Function which accepts a byteString (uncompressed file) and outputs a byteString (compressed file).
+compressByteString::BS.ByteString -> BS.ByteString
+
+compressByteString byteString = do
+
+  let contents = BS.unpack byteString
+
+  let compressed = compressString contents
+
+  --Turn the list of abbreviations into a list of puts (byteStrings)
+  let asPut = map (\ (index,word) -> (putWord16le index) >> (putWord8 word)) compressed
+
+  --Turn the list of puts (byteStrings) into one long put and call runput on that
+runPut (sequence_ asPut)
