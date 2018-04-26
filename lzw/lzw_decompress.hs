@@ -1,7 +1,8 @@
-Module Lzw_Decompress (decompressString) where
+module Lzw_Decompress (decompressString) where
 
 import Shared
 
+import qualified Data.Map as M
 import Data.Tuple
 import GHC.Word
 
@@ -15,7 +16,7 @@ decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation wh
 
     constructString (0,ch) = ch:[]      -- If first index (entry) is 0, nothing comes before ch
 
-    constructString (index,ch) = (char:(constructString abbreviation)) where        -- Insert ch just before the abbreviation mapped by index in the dictionary 
+    constructString (index,ch) = (ch:(constructString abbreviation)) where        -- Insert ch just before the abbreviation mapped by index in the dictionary 
         Just abbreviation = index `M.lookup` dict                                   -- Find index in the dictionary
 
         

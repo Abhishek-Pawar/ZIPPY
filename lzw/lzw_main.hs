@@ -1,4 +1,4 @@
-Module Main where
+module Main where
 
 import qualified Data.ByteString.Lazy as BS
 import Data.Binary.Get
@@ -6,7 +6,8 @@ import qualified Data.Map as M
 import System.Environment
 import Data.Tuple
 import GHC.Word
-    
+
+import Shared
 import Lzw_Compress
 import Lzw_Decompress
 
