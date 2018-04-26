@@ -1,19 +1,39 @@
+Module Lzw_Compress (compressString) where
+
 import Shared
 
---Function that accepts a string and  a (compression)dictionary and ouptus an abbreviation (from the string ) & remaining part ofthe string ,.
-compChar :: [Word8] -> Compdict -> ([Word8],Abbreviation)
+--Function that accepts a string and  a (compression) dictionary and ouptus the abbreviation (based on the string ) & remaining part ofthe string.
+compChar :: [Word8] -> CompDict -> ([Word8],Abbreviation)
 
 compChar string  dict = encodeChar string 0 where
 
-  --Function  which accepts remaining chars and an Id mapped to compressed chars and the rest of the string alongwith a abbreviation of the initials
+  --Function  which accepts remaining chars and an index corresponding to compressed chars and returns an abbreviation of the initials and the rest of the string
   encodeChar:: [Word8]->Id-> ([Word8],Abbreviation)
 
-  encodeChar (char:[]) index = ([],(index,char))    --If we encounter the last char in the string, we do not search the dict but write to file.
+  encodeChar (ch:[]) index = ([],(index,ch))        --If we encounter the last char in the string, we do not search the dict but write to file.
 
-  encodeChar (first:rest) index  =                  --If the string parsed is found in the dict,recursive call with  its ID and next char
+  encodeChar (first:rest) index  =                  --If the string is found in the dict,recursive call with its index and next char
 
     case (index,first) `M.lookup` dict of
 
-        (Just newIndex) -> encodeChar rest newIndex  --If the character is the first one after a sequence from the dict write the index of
-                                                     -- next character
+        (Just newIndex) -> encodeChar rest newIndex  -- Write the index of new character if the character is the first one after an abbreviation
+
           Nothing -> (rest,(index,first))
+
+--Function which accepts a list of Word8s which are compressed into a list of abbrevations and  outputs this new list
+compressString::[Word8]->[Abbreviation]
+
+compressString = encoder 256 initCompDict where
+
+  --Function which takes a index in the dictionary,the (compression) dictionary and the remaining list and returns a new list with the abbrevation appended to it
+  encoder::ID -> CompDict -> [Word8] -> [Abbreviation]
+
+  encoder _ _ []  = []                       --Base Case
+
+  encoder 0 _ remainder = encoder 256 initCompDict remainder            --If the index is  zero then pass the initialized dict with the rest of the arguements kept same
+
+  -- Encode the beginning of the string and append the abbrevation. Recursive call on remainder part.
+
+  encoder index dict string = currentAbbr:(encoder (index + 1) (M.insert currentAbbr index dict) remainder) where
+
+    (remainder,currentAbbr) = compChar string dict
