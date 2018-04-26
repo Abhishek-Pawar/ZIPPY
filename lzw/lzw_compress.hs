@@ -1,4 +1,4 @@
-Module Lzw_Compress (compressString) where
+module Lzw_Compress (compressString) where
 
 import Shared
 import qualified Data.ByteString.Lazy as BS
