@@ -1,4 +1,9 @@
+Module Lzw_Decompress (decompressString) where
+
 import Shared
+
+import Data.Tuple
+import GHC.Word
 
 -- Function which accepts an abbreviation and a (decompression) dictionary and outputs the string based on the dictionary
 decodeAbbreviation::Abbreviation->DecompDict->[Word8]
@@ -13,6 +18,7 @@ decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation wh
     constructString (index,ch) = (char:(constructString abbreviation)) where        -- Insert ch just before the abbreviation mapped by index in the dictionary 
         Just abbreviation = index `M.lookup` dict                                   -- Find index in the dictionary
 
+        
 -- Function that accepts a list of entries and generates corresponding list of words
 decompressString::[Abbreviation]->[Word8]
 
