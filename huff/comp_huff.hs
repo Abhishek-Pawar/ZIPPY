@@ -30,3 +30,28 @@ newHuffTree' hp = newHuffTree' (BHeap.insert newBr heapExclude)
         br2           = findMin $ deleteMinimum hp
         newBr         = newBranch br1 br2
         heapExclude   = deleteMinimum $ deleteMinimum hp
+
+{- |
+   Function accepts Huffman Tree and outputs a list of tuples with entry as
+   (Symbol ,Coding Binary)
+ -}
+getTuples :: (Ord a) => HuffTree a -> [(a, [Bool])]
+getTuples a = getTuples' a [] []
+
+getTuples' :: (Ord a) => HuffTree a -> [(a, [Bool])] -> [Bool] -> [(a, [Bool])]
+getTuples' (Leaf _ elem)  comb accum = (elem, accum ++ [True]):comb
+getTuples' (Branch _ i d) comb accum = lefts ++ rights
+    where
+        lefts  = getTuples' i comb (accum ++ [False])
+        rights = getTuples' d comb (accum ++ [True])
+
+
+{- |
+ - Function accepts  a symbol list and returns a list of tuples (symbol ,occurrence)
+ -}
+getInstances :: (Eq a) => [a] -> [(a,Integer)] -> [(a, Integer)]
+getInstances [] acc = acc
+getInstances (y:ys) acc = getInstances remain ((x, 1 + lp):acc)
+    where
+        remain = [b| b <- xs, b /= x]
+        lp = sum [1| a <- xs, a == x]
