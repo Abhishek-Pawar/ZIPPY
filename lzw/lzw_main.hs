@@ -10,6 +10,7 @@ import GHC.Word
 import Shared
 import Lzw_Compress
 import Lzw_Decompress
+import FileCompressor
 
 -- Function returns Get of an Abbreviation
 getAbbreviation::Get Abbreviation
@@ -43,9 +44,11 @@ main =
       --name of the output file.
       (option:inputfilename:outputfilename:_) <- getArgs --the 1st arg is option /the 2nd arg is input file/the 3rd arg is output file/the 4th arg is optional
       content <- BS.readFile inputfilename
+      dataRead <- readFromFile inputfilename
       case option of
 
         "-c-lzw" -> BS.writeFile outputfilename $ compressByteString content --compressed content of input is written to outputfile
-        "-d-lzw" ->  BS.writeFile outputfilename $ BS.pack $ decompressString $ runGet getAbbrList content--The result otained by decompression is
-                                                                                                       --written to the  outputfile
+        "-d-lzw" -> BS.writeFile outputfilename $ BS.pack $ decompressString $ runGet getAbbrList content--The result otained by decompression is
+        "-c-huff"-> printFile outputfilename $ transform True dataRead
+        "-d-huff"-> printFile outputfilename $ transform False dataRead                                                                                        --written to the  outputfile
         _ -> putStr "Invalid option"
