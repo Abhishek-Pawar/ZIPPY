@@ -3,11 +3,16 @@
    modules.
  -}
 module Huffman_shared (
+        -- * Type @HuffTree@
+        HuffTree,
         -- ** Common Operations on Huffman Compression and Decompression
         readInputFile,
         printCompFile,
         bytesToBits,
-        bitsToBytes
+        bitsToBytes,
+        frequency,
+        mergeHuffTrees,
+        constructHeap
 )
 
 where
@@ -15,6 +20,7 @@ where
     import Data.Word
     import Data.List
     import qualified Data.ByteString as BS
+    import BinomialHeap as BHeap
 
 
     {- |
@@ -72,8 +78,69 @@ where
             | even x = False : bytesToBitsRev (n-1) (div x 2)
             | otherwise = True : bytesToBitsRev (n-1) (div x 2)
 
+
+    {- |
+        Huffman Tree type definition
+    -}
     
+    data HuffTree x = Leaf Integer a 
+                    | Branch Integer (HuffTree a) (HuffTree a)
+                    deriving (Show, Read)
 
 
+    {- |
+        Huffman Trees equivalence instance
+    -}
     
+    instance (Eq a) => Eq (HuffTree a) where
+
+        (Leaf f e) == (Leaf f2 e2) = (f == f2) && (e == e2)
+
+        (Branch freq i d) == (Branch freqc2 i2 d2) = (freq == freq2) && (i == i2) && (d == d2)
+
+        _ == _ = False
+
+    {-|
+        Huffman Trees ordering instance
+    -}
+
+    instance(Ord a) => Ord (HuffTree a) where
+
+        Leaf f e <= Leaf f2 e2 = f <= f2
+
+        Branch f i d <= Leaf f2 e = f <= f2
+
+        Leaf f e <= Branch f2 i d = f <= f2
+
+        Branch f i d <= Branch f2 i2 d2 = f <= f2
+
+
+    {-|
+        Function that accepts a Huffman tree and gets the accumulated frequency in the root of the tree.
+    -}
+    frequency :: HuffTree huf -> Integer
+
+    frequency (Leaf f _) = f
+    frequency (Branch f _ _) = f
+
+
+    {-|
+        Function that accepts two Huffman trees and returns a new tree with the original ones as children 
+        of this tree. The accumulated frequency of this tree is the sum of the frequencies of the two children.
+    -}
+    mergeHuffTrees :: HuffTree huf -> HuffTree huf -> HuffTree huf
+
+    mergeHuffTrees l r = Branch (frequency l + frequency r) l r
+
+    {-|
+       Function that accepts a list of elements with its corresponding frequencies and constructs
+       a Binomial Heap of associated Huffman trees.
+    -}
+    constructHeap :: (Ord a) => [(a, Integer)] -> BinomialHeap (HuffTree a)
+
+    constructHeap = foldl add (BH []) where
+        add acc (element,frequency) = BHeap.insert (Leaf frequency element)
+
+
+
     
