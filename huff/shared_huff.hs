@@ -8,7 +8,7 @@ module Huffman_shared (
         -- ** Common Operations on Huffman Compression and Decompression
         readInputFile,
         printCompFile,
-        bytesToBits,
+        byteToBits,
         bitsToBytes,
         frequency,
         mergeHuffTrees,
@@ -58,7 +58,7 @@ where
 
         -- Recursive definition
         bitsToBytesRev x [] xi n = bitsToBytesRev x [] (xi*2) (n+1)
-        bitsToBytesRev x list xi 8 = bitsToBytesRev (x1:x) list 0 0
+        bitsToBytesRev x list xi 8 = bitsToBytesRev (xi:x) list 0 0
         bitsToBytesRev x (False:list) xi n = bitsToBytesRev x list (xi*2) (n+1)
         bitsToBytesRev x (True:list) xi n = bitsToBytesRev x list (xi*2+1) (n+1)
     
@@ -68,22 +68,22 @@ where
     -}
     byteToBits :: Byte -> [Bool]
 
-    bytesToBits = reverse . bytesToBitsRev 8 where
+    byteToBits = reverse . byteToBitsRev 8 where
 
         -- Base Case
-        bytesToBitsRev 0 _ = []
+        byteToBitsRev 0 _ = []
 
         -- Recursive Definition
-        bytesToBitsRev n x 
-            | even x = False : bytesToBitsRev (n-1) (div x 2)
-            | otherwise = True : bytesToBitsRev (n-1) (div x 2)
+        byteToBitsRev n x 
+            | even x = False : byteToBitsRev (n-1) (div x 2)
+            | otherwise = True : byteToBitsRev (n-1) (div x 2)
 
 
     {- |
         Huffman Tree type definition
     -}
     
-    data HuffTree x = Leaf Integer a 
+    data HuffTree a = Leaf Integer a 
                     | Branch Integer (HuffTree a) (HuffTree a)
                     deriving (Show, Read)
 
@@ -96,7 +96,7 @@ where
 
         (Leaf f e) == (Leaf f2 e2) = (f == f2) && (e == e2)
 
-        (Branch freq i d) == (Branch freqc2 i2 d2) = (freq == freq2) && (i == i2) && (d == d2)
+        (Branch freq i d) == (Branch freq2 i2 d2) = (freq == freq2) && (i == i2) && (d == d2)
 
         _ == _ = False
 
@@ -139,7 +139,7 @@ where
     constructHeap :: (Ord a) => [(a, Integer)] -> BinomialHeap (HuffTree a)
 
     constructHeap = foldl add (BH []) where
-        add acc (element,frequency) = BHeap.insert (Leaf frequency element)
+        add acc (element,frequency) = BHeap.insert (Leaf frequency element) acc
 
 
 
