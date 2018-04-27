@@ -18,7 +18,7 @@ newHuffTree :: (Ord a) => [(a, Integer)] -> HuffTree a
 newHuffTree list = newHuffTree' (newSet list)
 
 {- |
-   Function accepts a BinomialHeap which is a set of Huffman trees ,and returns
+   Function accepts a BinomialHeap which is a set of Huffman trees and returns
    a single Huffman tree consisting of the first values
  -}
 newHuffTree' :: (Ord a) => BinomialHeap (HuffTree a) -> HuffTree a
@@ -45,13 +45,11 @@ encodeHuff h = (concatMap encodeHuff' assocs) ++ [True, False]
         encodeHuff' (e, cods)
             = (True : intersperse True (reverse cods)) ++ (False : byteToBits e)
 
-  {- |
-   - The function accepts a list of symbols, return a tuple. This tuple has as
-     first element the Huffman Tree generated from the list of
-     given symbols. As a second element, it has a list where each one
-     of the symbols in the entrance, has been replaced by its representation
-     binary and concatenated to form a single chain
-   -}
+
+{- |
+ - The function accepts a list of symbols, return a tuple(elem ,binarylist).elem is the first of
+   given symbols. binarylist is a list where symbols have been replaced by binary and concatenated
+ -}
 
 huffComp :: (Ord a) => [a] -> (HuffTree a, [Bool])
 huffComp list = (tree, concatMap codelist list)
@@ -60,25 +58,43 @@ huffComp list = (tree, concatMap codelist list)
       code     = getInstances tree
       codelist s = snd (head (dropWhile (\(e,c) -> e/=s) code))
 
+
+{- |
+  The function changes a byte list into another byte list , compressing it
+  The last True is added in order to have an end of file character
+  (All of the False found before the last True are ignored by the decoder)
+ -}
+
+huffCompress :: [Byte] -> [Byte]
+huffCompress inputCode = bitsToBytes $ encodeHuff huffIp ++ list ++ [True]
+    where
+        (huffIp, list) = compress inputCode
+
+
 {- |
    Function accepts Huffman Tree and outputs a list of tuples with entry as
    (Symbol ,Coding Binary)
  -}
 
 getTuples :: (Ord a) => HuffTree a -> [(a, [Bool])]
+
 getTuples a = getTuples' a [] []
 
+
 getTuples' :: (Ord a) => HuffTree a -> [(a, [Bool])] -> [Bool] -> [(a, [Bool])]
+
 getTuples' (Leaf _ elem)  comb accum = (elem, accum ++ [True]):comb
-getTuples' (Branch _ i d) comb accum = lefts ++ rights
+getTuples' (Branch _ i d) comb accum = left ++ right
     where
-        lefts  = getTuples' i comb (accum ++ [False])
-        rights = getTuples' d comb (accum ++ [True])
+        left  = getTuples' i comb (accum ++ [False])
+        right = getTuples' d comb (accum ++ [True])
+
 
 {- |
- - Function accepts  a symbol list and returns a list of tuples (symbol ,occurrence)
+ - Function accepts a symbol list and returns a list of tuples (symbol ,occurrence)
  -}
 getInstances :: (Eq a) => [a] -> [(a,Integer)] -> [(a, Integer)]
+
 getInstances [] acc = acc
 getInstances (y:ys) acc = getInstances remain ((x, 1 + lp):acc)
     where
