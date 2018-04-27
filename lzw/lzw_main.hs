@@ -7,7 +7,7 @@ import System.Environment
 import Data.Tuple
 import GHC.Word
 
-import Shared
+import Lzw_shared
 import Lzw_Compress
 import Lzw_Decompress
 
