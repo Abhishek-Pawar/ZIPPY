@@ -15,7 +15,7 @@ import BinomialHeap as BHeap
  -}
 newHuffTree :: (Ord a) => [(a, Integer)] -> HuffTree a
 
-newHuffTree list = newHuffTree' (newSet list)
+newHuffTree list = newHuffTree' (constructHeap list)
 
 {- |
    Function accepts a BinomialHeap which is a set of Huffman trees and returns
@@ -28,7 +28,7 @@ newHuffTree' hp = newHuffTree' (BHeap.insert newBr heapExclude)
     where
         br1           = findMin hp
         br2           = findMin $ deleteMinimum hp
-        newBr         = newBranch br1 br2
+        newBr         = mergeHuffTrees br1 br2
         heapExclude   = deleteMinimum $ deleteMinimum hp
 
 {- |
