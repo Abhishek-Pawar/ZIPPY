@@ -32,9 +32,39 @@ newHuffTree' hp = newHuffTree' (BHeap.insert newBr heapExclude)
         heapExclude   = deleteMinimum $ deleteMinimum hp
 
 {- |
+    Function which reads input.If it comes across a True, then it can be first True
+    (either at the beginning of the code or after a False)
+    then the next bit is part of the tree (represented inversely).Otherwise, it is considered as
+    finalized the code. If a False is read, then the next 8 bits,
+    correspond to a symbol.
+ -}
+encodeHuff :: HuffTree Byte -> [Bool]
+encodeHuff h = (concatMap encodeHuff' assocs) ++ [True, False]
+    where
+        assocs = getTuples h
+        encodeHuff' (e, cods)
+            = (True : intersperse True (reverse cods)) ++ (False : byteToBits e)
+
+  {- |
+   - The function accepts a list of symbols, return a tuple. This tuple has as
+     first element the Huffman Tree generated from the list of
+     given symbols. As a second element, it has a list where each one
+     of the symbols in the entrance, has been replaced by its representation
+     binary and concatenated to form a single chain
+   -}
+
+huffComp :: (Ord a) => [a] -> (HuffTree a, [Bool])
+huffComp list = (tree, concatMap codelist list)
+  where
+      tree      = newHuffTree $ getInstances list []
+      code     = getInstances tree
+      codelist s = snd (head (dropWhile (\(e,c) -> e/=s) code))
+
+{- |
    Function accepts Huffman Tree and outputs a list of tuples with entry as
    (Symbol ,Coding Binary)
  -}
+
 getTuples :: (Ord a) => HuffTree a -> [(a, [Bool])]
 getTuples a = getTuples' a [] []
 
@@ -45,7 +75,6 @@ getTuples' (Branch _ i d) comb accum = lefts ++ rights
         lefts  = getTuples' i comb (accum ++ [False])
         rights = getTuples' d comb (accum ++ [True])
 
-
 {- |
  - Function accepts  a symbol list and returns a list of tuples (symbol ,occurrence)
  -}
@@ -53,5 +82,5 @@ getInstances :: (Eq a) => [a] -> [(a,Integer)] -> [(a, Integer)]
 getInstances [] acc = acc
 getInstances (y:ys) acc = getInstances remain ((x, 1 + lp):acc)
     where
-        remain = [b| b <- xs, b /= x]
-        lp = sum [1| a <- xs, a == x]
+      remain = [b| b <- xs, b /= x]
+      lp = sum [1| a <- xs, a == x]
