@@ -24,14 +24,14 @@ root :: BinomialTree a -> a
 root (Node h root r) = root
 
 {- | Function that accepts two trees of height h
-    | Returns a tree of height (h+1) 
+    | Returns a tree of height (h+1)
     | containing same elements.
 -}
 linkTrees :: (Ord a) => BinomialTree a -> BinomialTree a -> BinomialTree a
+linkTrees t1@(Node r x1 c1) t2@(Node _ x2 c2)
+    | x1 <= x2 = Node (r+1) x1 (t2:c1)
+    | otherwise = Node (r+1) x2 (t1:c2)
 
-linkTrees tree1@(Node h1 root1 r1) tree2@(Node h2 root2 r2)
-    root1 <= root2 = Node (h1+1) root1 (tree2:r1)
-    otherwise = Node (h1+1) root2 (tree1:r2)
 
 {- | Function that accepts a list of trees and a tree
     | Inserts this tree at corresponding position in the list
@@ -39,33 +39,22 @@ linkTrees tree1@(Node h1 root1 r1) tree2@(Node h2 root2 r2)
 -}
 insertTree :: (Ord a) => BinomialTree a -> [BinomialTree a] -> [BinomialTree a]
 
-insertTree tree [] = [t]        -- If the list of trees is empty (Base Case)
+insertTree tree [] = [tree]        -- If the list of trees is empty (Base Case)
 insertTree tree (t:ts) = if height tree < height t then tree:(t:ts) else insertTree (linkTrees tree t) ts
 
 {- | Function to insert a Node instance in the @BinomialHeap@
 -}
-insertHeap :: (Ord a) => a -> BinomialHeap a -> BinomialHeap a
+insert :: (Ord a) => a -> BinomialHeap a -> BinomialHeap a
+insert x (BH ts) = BH (insertTree (Node 0 x []) ts)
 
-insertHeap x (BH ts) = BH (insertTree (Node 0 root []) ts)
-
-{- | Function that accepts two @BinomialTree@ instances
-    | Merges the two @BinomialTree@ and returns it
--}
+-- | Merges two @BinomialTree@ instances and returns one
 mergeTrees :: (Ord a) => [BinomialTree a] -> [BinomialTree a] -> [BinomialTree a]
-
--- Base Cases
-
-mergeTrees ts [] = ts
-mergeTrees [] ts = ts
-
--- Recursive Definition
-
-mergeTrees ts1@(t1:tr1) ts2@(t2:tr2)
-    height t1 < height t2 = t1 : mergeTrees tr1 ts2
-    height t2 < height t1 = t2 : mergeTrees ts1 tr2
-    otherwise = insertTree (linkTrees t1 t2) (mergeTrees tr1 tr2)
-
-
+mergeTrees ts1 [] = ts1
+mergeTrees [] ts2 = ts2
+mergeTrees ts1@(t1:ts1') ts2@(t2:ts2')
+    | height t1 < height t2 = t1 : mergeTrees ts1' ts2
+    | height t2 < height t1 = t2 : mergeTrees ts1 ts2'
+    | otherwise = insertTree (linkTrees t1 t2) (mergeTrees ts1' ts2')
 
 {- | Auxillary function that accepts a @BinomialTree@ and removes the minimum.
     | Returns minimum and the remainder tree.
