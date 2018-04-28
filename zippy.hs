@@ -1,5 +1,11 @@
+{- |
+   This  module  runs the application in command line
+ -}
 
-module Main where
+module Main(
+
+module Main
+) where
 
 import qualified Data.ByteString.Lazy as BS
 import Data.Binary.Get
@@ -16,12 +22,14 @@ import Huffman_shared
 import Comp_huff
 import Decomp_huff
 
+{-|
+  Main function: Runs the app in CLI.
+-}
 main =
   do
-
-      (option:inputfilename:outputfilename:_) <- getArgs --the 1st arg to choose type of comp-decomp /the 2nd arg is input file/the 3rd arg is output file/the 4th arg is optional
-      content <- BS.readFile inputfilename
-      dataRead <- readInputFile inputfilename
+      (option:inputfilename:outputfilename:_) <- getArgs -- The 1st arg to choose type of comp-decomp /the 2nd arg is input file/the 3rd arg is output file/the 4th arg is optional
+      content <- BS.readFile inputfilename               --Read the file in a Bytestring format
+      dataRead <- readInputFile inputfilename            --Reads the file as a list of bytes
 
       case option of
 

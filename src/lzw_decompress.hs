@@ -1,14 +1,22 @@
-module Lzw_Decompress (decompressString,getAbbrList) where
+{- |
+   This module defines the necessary functionality for Lzw decompression
+   Includes functions for decompression alongwith some some decode functions
+ -}
+
+  module Lzw_Decompress(
+  -- * Class @Lzw_Decompress@
+  module Lzw_Decompress
+  ) where
 
 import Lzw_shared
 import qualified Data.Map as M
 import Data.Binary.Get
 import Data.Tuple
 import GHC.Word
-{-
-  | Function returns Get of an Abbreviation
--}
 
+{- |
+   Function returns Get of an Abbreviation
+-}
 getAbbr::Get Abbreviation
 
 getAbbr =
@@ -18,8 +26,8 @@ getAbbr =
 
         return (index,ch)
 
-{-
-  |Function to get a list of abbreviations from a ByteString (uncompressed file)
+{-|
+  Function to get a list of abbreviations from a ByteString (uncompressed file)
 -}
 getAbbrList::Get [Abbreviation]
 
@@ -34,15 +42,15 @@ getAbbrList =
 
             return(thisAbbr:remAbbr)        -- Appends  abbreviation to abbreviations from remainder list
 
-{-
-  |Function which accepts an abbreviation and a (decompression) dictionary and outputs the string based on the dictionary
+{-|
+  Function which accepts an abbreviation and a (decompression) dictionary and outputs the string based on the dictionary
 -}
-
 decodeAbbreviation::Abbreviation->DecompDict->[Word8]
 
 decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation where     -- reverse the string returned by constructString
 
-    {- | Function to construct the string based on abbreviation; constructs string in reverse
+    {- |
+       Function to construct the string based on abbreviation; constructs string in reverse
     -}
     constructString::Abbreviation->[Word8]
 
@@ -52,14 +60,16 @@ decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation wh
         Just abbreviation = index `M.lookup` dict                                   -- Find index in the dictionary
 
 
-{- | Function that accepts a list of entries and generates corresponding list of words
+{- |
+   Function that accepts a list of entries and generates corresponding list of words
 -}
 decompressString::[Abbreviation]->[Word8]
 
 decompressString abbreviationList = decoder abbreviationList 256 initDecompDict where
 
-    {- | Function accepts a list of remainder abbreviations, and the current index and current state of the (decompression) dictionary
-        | Returns the expansion of the abbreviation list
+    {- |
+       |Function accepts a list of remainder abbreviations, and the current index and current state of the (decompression) dictionary
+        Returns the expansion of the abbreviation list
     -}
     decoder::[Abbreviation]->Id->DecompDict->[Word8]
 

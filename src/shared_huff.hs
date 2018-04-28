@@ -145,7 +145,12 @@ where
 
     constructHeap = foldl add (BH []) where
         add acc (element,frequency) = BHeap.insert (Leaf frequency element) acc
-
+        
+    {-|
+     Accepts a Huffman tree and a list that represents a chain of bits,
+    returns a list of symbols that corresponds to the decoding of the tree's information
+    It is called by huffDecompress
+  -}
     retSym :: HuffTree a -> [Bool] -> [a]
     retSym a [] = []
     retSym a c  = fetchSym a c []

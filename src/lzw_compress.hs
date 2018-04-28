@@ -1,4 +1,11 @@
-module Lzw_Compress (compressByteString) where
+{- |
+   This module defines the necessary functionality for LZW compression
+   Includes functions for compression alongwith some encode functions
+ -}
+  module Lzw_Compress (
+  -- * Class @Lzw_Compress@
+  module Lzw_Compress
+  ) where
 
 import Lzw_shared
 import qualified Data.ByteString.Lazy as BS

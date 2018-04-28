@@ -1,6 +1,10 @@
+{- |
+   This module defines the necessary functionality for HUFF decompression
+   Includes functions for decompression alongwith some some decode functions
+ -}
 module Decomp_huff (
-    -- ** Compression function
-    huffDecompress
+  -- ** Decompression Related function
+    module Decomp_huff
 )
 where
 

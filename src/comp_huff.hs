@@ -1,7 +1,11 @@
 
+{- |
+   This module defines the necessary functionality for huffman compression
+   Includes functions for compression alongwith some encode functions
+ -}
 module Comp_huff (
-    -- ** Compression function
-    huffCompress
+-- ** Compression Related function
+    module Comp_huff
 )
 where
 
