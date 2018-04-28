@@ -1,0 +1,4 @@
+import Test.QuickCheck
+
+
+main = 
