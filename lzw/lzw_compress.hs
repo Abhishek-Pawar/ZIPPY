@@ -1,6 +1,6 @@
 module Lzw_Compress (compressByteString) where
 
-import Shared
+import Lzw_shared
 import qualified Data.ByteString.Lazy as BS
 import Data.Binary.Put
 import Data.Binary.Get

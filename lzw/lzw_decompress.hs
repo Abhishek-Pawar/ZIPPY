@@ -1,6 +1,6 @@
 module Lzw_Decompress (decompressString) where
 
-import Shared
+import Lzw_shared
 
 import qualified Data.Map as M
 import Data.Tuple

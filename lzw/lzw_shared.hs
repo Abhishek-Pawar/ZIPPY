@@ -1,4 +1,4 @@
-module Shared (Id,Abbreviation,CompDict,DecompDict,initCompDict,initDecompDict) where
+module Lzw_shared (Id,Abbreviation,CompDict,DecompDict,initCompDict,initDecompDict) where
   
 
 import System.Environment
