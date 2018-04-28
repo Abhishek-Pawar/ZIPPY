@@ -42,7 +42,8 @@ decodeAbbreviation::Abbreviation->DecompDict->[Word8]
 
 decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation where     -- reverse the string returned by constructString
 
-    -- Function to construct the string based on abbreviation; constructs string in reverse
+    {- | Function to construct the string based on abbreviation; constructs string in reverse
+    -}
     constructString::Abbreviation->[Word8]
 
     constructString (0,ch) = ch:[]      -- If first index (entry) is 0, nothing comes before ch
@@ -51,13 +52,15 @@ decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation wh
         Just abbreviation = index `M.lookup` dict                                   -- Find index in the dictionary
 
 
--- Function that accepts a list of entries and generates corresponding list of words
+{- | Function that accepts a list of entries and generates corresponding list of words
+-}
 decompressString::[Abbreviation]->[Word8]
 
 decompressString abbreviationList = decoder abbreviationList 256 initDecompDict where
 
-    -- Function accepts a list of remainder abbreviations, and the current index and current state of the (decompression) dictionary
-    -- Returns the expansion of the abbreviation list
+    {- | Function accepts a list of remainder abbreviations, and the current index and current state of the (decompression) dictionary
+        | Returns the expansion of the abbreviation list
+    -}
     decoder::[Abbreviation]->Id->DecompDict->[Word8]
 
     decoder [] _ _ = []     -- Return empty list if no abbreviations
