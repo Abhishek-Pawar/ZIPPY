@@ -1,4 +1,0 @@
-import Test.QuickCheck
-
-
-main = 

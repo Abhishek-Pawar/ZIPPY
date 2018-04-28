@@ -1,4 +1,4 @@
-# Revision history for zippy
+# Revision history for Zippy
 
 ## 0.1.0.0  -- YYYY-mm-dd
 
