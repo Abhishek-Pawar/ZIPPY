@@ -6,13 +6,17 @@ where
 
 import Huffman_shared
 import BinomialHeap as BHeap
+import Data.Word
 
+
+
+type Byte = Data.Word.Word8
 {- |
    Function whcih accepts  a list of tuples with a set of symbols, next totheir binary coding (False represents zero and True the one).
    It Builds a Huffman Tree such that these association they could have been generated.The accumulated frequency will be assigned to zero (0) for
    all the leaves and branches of it
  -}
-makeHuffTree :: [(a, [Bool])] -> Huffman a
+makeHuffTree :: [(a, [Bool])] -> HuffTree a
 makeHuffTree ((e,[True]):[]) = Leaf 0 e
 makeHuffTree list            = Branch 0 (makeHuffTree left) (makeHuffTree right)
     where
@@ -20,12 +24,10 @@ makeHuffTree list            = Branch 0 (makeHuffTree left) (makeHuffTree right)
         right = [(e,xs)| (e,(True:xs))  <- list]
 
 {- |
-  Lee una codificacion de un Arbol de Huffman y reconstruye el
-  Arbol del que fue generado, separando el resto de los datos binarios.
-  (El Arbol de Huffman generado tendra frecuencias acumuladas triviales,
-  iguales a cero).
+    Function reads the encoding of a Huffman Tree and reconstructs the
+    Tree from which it was generated, separating the rest of the binary data.
  -}
-decodeHuff :: [Bool] -> (Huffman Byte, [Bool])
+decodeHuff :: [Bool] -> (HuffTree Byte, [Bool])
 decodeHuff code = (huff, trim rem)
     where
         (attr, rem) = parseAssocsInit [] code
@@ -43,26 +45,21 @@ decodeHuff code = (huff, trim rem)
    returns a list of symbols that corresponds to the decoding of said
    chain with the tree's information
  -}
-huffDecomp :: Huffman a -> [Bool] -> [a]
+huffDecomp :: HuffTree a -> [Bool] -> [a]
 huffDecomp a [] = []
 huffDecomp a c  = fetchSym a c []
     where
-        fetchSym (Leaf _ e)     []         acc = acc
-        fetchSym (Leaf _ e)     (_:rest)   acc = acc ++ [e] ++ (huffDecomp a rest)
-        fetchSym (Branch _ _ d) (True:xs)  acc = fetchSym d xs acc
+        fetchSym (Leaf _ e) [] acc = acc
+        fetchSym (Leaf _ e) (_:rem) acc = acc ++ [e] ++ (huffDecomp a rem)
+        fetchSym (Branch _ _ d) (True:xs) acc = fetchSym d xs acc
         fetchSym (Branch _ i _) (False:xs) acc = fetchSym i xs acc
 
-
-
 {- |
-  Transforms a byte list into another one, compressing or decompressing it
-  as specified (True is compress, False is decompress).
-  When compressing, the last True is added in order to have an end of file character
-  (All of the False found before the last True will be ignored by the decoder)
+   Function transforms a byte list into another one,  decompressing it
  -}
 
 huffDecompress :: [Byte] -> [Byte]
 
-huffDecompress code = huffDecomp huff cods
+huffDecompress code = huffDecomp huffTr cods
     where
-        (huff, cods) = decodeHuff . concat $ map byteToBits code
+        (huffTr, cods) = decodeHuff . concat $ map byteToBits code
