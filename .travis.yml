@@ -5,6 +5,10 @@ sudo: false
 git:
   submodules: false  # whether to recursively clone submodules
 
+cache:
+  directories:
+  - $HOME/.ghc
+
 branches:
   only:
     - master
@@ -16,16 +20,7 @@ addons:
     packages:
     - ghc-8.0.2
 
-matrix:
-  include:
-    - compiler: "ghc-8.0.2"
-    # env: TEST=--disable-tests BENCH=--disable-benchmarks
-      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-head,ghc-8.0.2], sources: [hvr-ghc]}}
-    - compiler: "ghc-8.2.2"
-    # env: TEST=--disable-tests BENCH=--disable-benchmarks
-      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-head,ghc-8.2.2], sources: [hvr-ghc]}}
-    - compiler: "ghc-8.4.2"
-    # env: TEST=--disable-tests BENCH=--disable-benchmarks
-      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-head,ghc-8.4.2], sources: [hvr-ghc]}}
+ghc:
+  - "8.0.2"
 script:
   - ghc zippy.hs src/*.hs -O -hidir compiled -odir compiled
