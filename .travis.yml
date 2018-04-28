@@ -2,5 +2,5 @@ ghc:
   - "8.0.2"
 
 script:
-  - chmod +x build.sh
-  - ./build.sh
+  - ghc zippy.hs src/*.hs  -O -hidir compiled -odir compiled
+
