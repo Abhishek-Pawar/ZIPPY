@@ -13,12 +13,14 @@ data BinomialTree a = Node Int a [BinomialTree a] deriving (Show, Read)
 
 data BinomialHeap a = BH [BinomialTree a] deriving (Show, Read)
 
--- | Get the height of the binomial tree
+{- | Get the height of the binomial tree
+ -}
 height :: BinomialTree a -> Int
 
 height (Node h root r) = h
 
--- | Get the root of the binomial tree
+{- | Get the root of the binomial tree
+-}
 root :: BinomialTree a -> a
 
 root (Node h root r) = root
@@ -47,7 +49,8 @@ insertTree tree (t:ts) = if height tree < height t then tree:(t:ts) else insertT
 insert :: (Ord a) => a -> BinomialHeap a -> BinomialHeap a
 insert x (BH ts) = BH (insertTree (Node 0 x []) ts)
 
--- | Merges two @BinomialTree@ instances and returns one
+{- | Merges two @BinomialTree@ instances and returns one
+-}
 mergeTrees :: (Ord a) => [BinomialTree a] -> [BinomialTree a] -> [BinomialTree a]
 mergeTrees ts1 [] = ts1
 mergeTrees [] ts2 = ts2
