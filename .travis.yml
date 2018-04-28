@@ -1,0 +1,5 @@
+ghc:
+  - "8.0.2"
+
+script:
+  - ./build.sh
