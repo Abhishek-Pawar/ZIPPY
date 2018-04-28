@@ -5,8 +5,10 @@ import qualified Data.Map as M
 import Data.Binary.Get
 import Data.Tuple
 import GHC.Word
+{-
+  | Function returns Get of an Abbreviation
+-}
 
--- Function returns Get of an Abbreviation
 getAbbr::Get Abbreviation
 
 getAbbr =
@@ -16,7 +18,9 @@ getAbbr =
 
         return (index,ch)
 
--- Function to get a list of abbreviations from a ByteString (uncompressed file)
+{-
+  |Function to get a list of abbreviations from a ByteString (uncompressed file)
+-}
 getAbbrList::Get [Abbreviation]
 
 getAbbrList =
@@ -30,8 +34,10 @@ getAbbrList =
 
             return(thisAbbr:remAbbr)        -- Appends  abbreviation to abbreviations from remainder list
 
+{-
+  |Function which accepts an abbreviation and a (decompression) dictionary and outputs the string based on the dictionary
+-}
 
--- Function which accepts an abbreviation and a (decompression) dictionary and outputs the string based on the dictionary
 decodeAbbreviation::Abbreviation->DecompDict->[Word8]
 
 decodeAbbreviation abbreviation dict = reverse $ constructString abbreviation where     -- reverse the string returned by constructString
