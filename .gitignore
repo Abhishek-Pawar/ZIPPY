@@ -340,6 +340,10 @@ __pycache__/
 # Compiled Folder
 compiled/
 
+# Compressed Files
+*.huf
+*.lzw
+
 ### VisualStudio Patch ###
 # By default, sensitive information, such as encrypted password
 # should be stored in the .pubxml.user file.
