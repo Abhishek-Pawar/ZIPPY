@@ -1,5 +1,7 @@
 # Zippy
 
+[![Build Status](https://travis-ci.com/IITH-SBJoshi/haskell-13.svg?token=8atBSLxEouzs1ugsHMsx&branch=master)](https://travis-ci.com/IITH-SBJoshi/haskell-13)
+
 Zippy is a small file compression utility built purely in Haskell. It provides for two different data compression techniques, namely, 
   - Huffman Encoding
   - Lempel–Ziv–Welch (LZW) Compression Algorithm
@@ -34,6 +36,7 @@ Clone the repository.
 
 ```sh
 $ cd haskell-13
+$ chmod +x build.sh
 $ ./build.sh
 ```
 # Authors
