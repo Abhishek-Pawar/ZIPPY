@@ -3,6 +3,8 @@
    modules.
  -}
 module Huffman_shared (
+        -- * Type @Byte@
+        Byte,
         -- * Type @HuffTree@
         HuffTree,
         -- ** Common Operations on Huffman Compression and Decompression
@@ -12,7 +14,10 @@ module Huffman_shared (
         bitsToBytes,
         frequency,
         mergeHuffTrees,
-        constructHeap
+        constructHeap,
+        makeHuffTree,
+        retSym,
+        getTuples
 )
 
 where
@@ -140,3 +145,42 @@ where
 
     constructHeap = foldl add (BH []) where
         add acc (element,frequency) = BHeap.insert (Leaf frequency element) acc
+
+    retSym :: HuffTree a -> [Bool] -> [a]
+    retSym a [] = []
+    retSym a c  = fetchSym a c []
+        where
+            fetchSym (Leaf _ e) [] acc = acc
+            fetchSym (Leaf _ e) (_:rem) acc = acc ++ [e] ++ (retSym a rem)
+            fetchSym (Branch _ _ d) (True:xs) acc = fetchSym d xs acc
+            fetchSym (Branch _ i _) (False:xs) acc = fetchSym i xs acc
+
+    {- |
+       Function whcih accepts  a list of tuples with a set of symbols, next totheir binary coding (False represents zero and True the one).
+       It Builds a Huffman Tree such that these association they could have been generated.The accumulated frequency will be assigned to zero (0) for
+       all the leaves and branches of it
+     -}
+    makeHuffTree :: [(a, [Bool])] -> HuffTree a
+    makeHuffTree ((e,[True]):[]) = Leaf 0 e
+    makeHuffTree list            = Branch 0 (makeHuffTree left) (makeHuffTree right)
+        where
+            left =  [(e,xs)| (e,(False:xs)) <- list]
+            right = [(e,xs)| (e,(True:xs))  <- list]
+
+    {- |
+       Function accepts Huffman Tree and outputs a list of tuples with entry as
+       (Symbol ,Coding Binary)
+     -}
+
+    getTuples :: (Ord a) => HuffTree a -> [(a, [Bool])]
+
+    getTuples a = getTuples' a [] []
+
+
+    getTuples' :: (Ord a) => HuffTree a -> [(a, [Bool])] -> [Bool] -> [(a, [Bool])]
+
+    getTuples' (Leaf _ elem)  comb accum = (elem, accum ++ [True]):comb
+    getTuples' (Branch _ i d) comb accum = left ++ right
+        where
+            left  = getTuples' i comb (accum ++ [False])
+            right = getTuples' d comb (accum ++ [True])

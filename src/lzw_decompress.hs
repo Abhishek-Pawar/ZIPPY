@@ -1,7 +1,8 @@
-module Lzw_Decompress (decompressString) where
+module Lzw_Decompress (decompressString,getAbbrList) where
 
 import Lzw_shared
 import qualified Data.Map as M
+import Data.Binary.Get
 import Data.Tuple
 import GHC.Word
 

@@ -9,20 +9,6 @@ import BinomialHeap as BHeap
 import Data.Word
 
 
-
-type Byte = Data.Word.Word8
-{- |
-   Function whcih accepts  a list of tuples with a set of symbols, next totheir binary coding (False represents zero and True the one).
-   It Builds a Huffman Tree such that these association they could have been generated.The accumulated frequency will be assigned to zero (0) for
-   all the leaves and branches of it
- -}
-makeHuffTree :: [(a, [Bool])] -> HuffTree a
-makeHuffTree ((e,[True]):[]) = Leaf 0 e
-makeHuffTree list            = Branch 0 (makeHuffTree left) (makeHuffTree right)
-    where
-        left =  [(e,xs)| (e,(False:xs)) <- list]
-        right = [(e,xs)| (e,(True:xs))  <- list]
-
 {- |
     Function reads the encoding of a Huffman Tree and reconstructs the
     Tree from which it was generated, separating the rest of the binary data.
@@ -47,12 +33,7 @@ decodeHuff code = (huff, trim rem)
  -}
 huffDecomp :: HuffTree a -> [Bool] -> [a]
 huffDecomp a [] = []
-huffDecomp a c  = fetchSym a c []
-    where
-        fetchSym (Leaf _ e) [] acc = acc
-        fetchSym (Leaf _ e) (_:rem) acc = acc ++ [e] ++ (huffDecomp a rem)
-        fetchSym (Branch _ _ d) (True:xs) acc = fetchSym d xs acc
-        fetchSym (Branch _ i _) (False:xs) acc = fetchSym i xs acc
+huffDecomp a c = retSym a c
 
 {- |
    Function transforms a byte list into another one,  decompressing it

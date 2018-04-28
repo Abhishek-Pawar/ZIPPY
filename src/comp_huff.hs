@@ -7,6 +7,7 @@ where
 
 import Huffman_shared
 import BinomialHeap as BHeap
+import Data.List
 
 
 {- |
@@ -23,11 +24,11 @@ newHuffTree list = newHuffTree' (constructHeap list)
  -}
 newHuffTree' :: (Ord a) => BinomialHeap (HuffTree a) -> HuffTree a
 
-newHuffTree' (Hp [(Node 0 t _)]) = t
+newHuffTree' (BH [(Node 0 t _)]) = t
 newHuffTree' hp = newHuffTree' (BHeap.insert newBr heapExclude)
     where
-        br1           = findMin hp
-        br2           = findMin $ deleteMinimum hp
+        br1           = findMinimum hp
+        br2           = findMinimum $ deleteMinimum hp
         newBr         = mergeHuffTrees br1 br2
         heapExclude   = deleteMinimum $ deleteMinimum hp
 
@@ -52,10 +53,10 @@ encodeHuff h = (concatMap encodeHuff' assocs) ++ [True, False]
  -}
 
 huffComp :: (Ord a) => [a] -> (HuffTree a, [Bool])
-huffComp list = (tree, concatMap codelist list)
+huffComp l = (tree, concatMap codelist l)
   where
-      tree      = newHuffTree $ getInstances list []
-      code     = getInstances tree
+      tree       = newHuffTree $ getInstances l []
+      code       = getTuples tree
       codelist s = snd (head (dropWhile (\(e,c) -> e/=s) code))
 
 
@@ -68,26 +69,8 @@ huffComp list = (tree, concatMap codelist list)
 huffCompress :: [Byte] -> [Byte]
 huffCompress inputCode = bitsToBytes $ encodeHuff huffIp ++ list ++ [True]
     where
-        (huffIp, list) = compress inputCode
+        (huffIp, list) = huffComp inputCode
 
-
-{- |
-   Function accepts Huffman Tree and outputs a list of tuples with entry as
-   (Symbol ,Coding Binary)
- -}
-
-getTuples :: (Ord a) => HuffTree a -> [(a, [Bool])]
-
-getTuples a = getTuples' a [] []
-
-
-getTuples' :: (Ord a) => HuffTree a -> [(a, [Bool])] -> [Bool] -> [(a, [Bool])]
-
-getTuples' (Leaf _ elem)  comb accum = (elem, accum ++ [True]):comb
-getTuples' (Branch _ i d) comb accum = left ++ right
-    where
-        left  = getTuples' i comb (accum ++ [False])
-        right = getTuples' d comb (accum ++ [True])
 
 
 {- |
@@ -96,7 +79,7 @@ getTuples' (Branch _ i d) comb accum = left ++ right
 getInstances :: (Eq a) => [a] -> [(a,Integer)] -> [(a, Integer)]
 
 getInstances [] acc = acc
-getInstances (y:ys) acc = getInstances remain ((x, 1 + lp):acc)
+getInstances (y:ys) acc = getInstances remain ((y, 1 + lp):acc)
     where
-      remain = [b| b <- xs, b /= x]
-      lp = sum [1| a <- xs, a == x]
+      remain = [b | b <- ys, b /= y]
+      lp = sum [1 | a <- ys, a == y]
