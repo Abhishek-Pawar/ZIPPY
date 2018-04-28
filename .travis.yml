@@ -1,6 +1,31 @@
-ghc:
-  - "8.0.2"
 
+language: c
+sudo: false
+
+git:
+  submodules: false  # whether to recursively clone submodules
+
+branches:
+  only:
+    - master
+
+addons:
+  apt:
+    sources:
+    - hvr-ghc
+    packages:
+    - ghc-8.0.2
+
+matrix:
+  include:
+    - compiler: "ghc-8.0.2"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-head,ghc-8.0.2], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.2.2"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-head,ghc-8.2.2], sources: [hvr-ghc]}}
+    - compiler: "ghc-8.4.2"
+    # env: TEST=--disable-tests BENCH=--disable-benchmarks
+      addons: {apt: {packages: [ghc-ppa-tools,cabal-install-head,ghc-8.4.2], sources: [hvr-ghc]}}
 script:
-  - ghc zippy.hs src/*.hs  -O -hidir compiled -odir compiled
-
+  - ghc zippy.hs src/*.hs -O -hidir compiled -odir compiled
