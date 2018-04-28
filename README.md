@@ -36,6 +36,7 @@ Clone the repository.
 
 ```sh
 $ cd haskell-13
+$ chmod +x build.sh
 $ ./build.sh
 ```
 # Authors
